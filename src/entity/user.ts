@@ -6,7 +6,7 @@ export default class User extends BaseEntity {
     uid! : number;
 
     @Column()
-    accountName!: number;
+    accountName!: string;
 
     @Column()
     passWord!: string;

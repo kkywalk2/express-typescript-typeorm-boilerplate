@@ -19,7 +19,8 @@
        // TypeORM 사용 시에 decoration 관련 옵션
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "esModuleInterop": true
      },
     // 어디에 있는 파일을 컴파일 할 것인지
      "include": [
