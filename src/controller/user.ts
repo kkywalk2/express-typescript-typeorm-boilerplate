@@ -1,14 +1,15 @@
 import express from 'express'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 import User from "../entity/user"
+import { SignInReq, SignInRes } from "./models"
 
 let router = express.Router()
 
 router.get('/GetAllUsers', async function (req, res, next) {
-    console.log("Called GetAllUsers");
-    let user = await User.findByInfo("test","test")
-    res.send(user[0])
+    let users = await User.find()
+    res.send(users)
 });
 
 router.post('/SignIn', (req, res, next) => {
@@ -20,12 +21,27 @@ router.post('/SignIn', (req, res, next) => {
                 {
                     uid: user.uid,
                 }, // 토큰에 입력할 private 값
-                'asdadsadasdasdsasd', // 나만의 시크릿키
+                process.env.JWT_SECRET!, // 나만의 시크릿키
                 { expiresIn: "5m" } // 토큰 만료 시간
             );
             return res.json({ token });
         });
     })(req, res);
+})
+
+router.post('/SignUp', async (req, res, next) => {
+    const reqData = req.body as SignInReq
+    const user = await User.findOne({accountName : reqData.accountName})
+    if( user == undefined ){
+        const hashed = await bcrypt.hash(reqData.passWord, 1)
+        const newUser = new User()
+        newUser.accountName = reqData.accountName
+        newUser.passWord = hashed
+        await newUser.save()
+        return res.json(new SignInRes("OK"))
+    }else{
+        return res.json(new SignInRes("Already Exist UserName"))
+    }
 })
 
 export default router

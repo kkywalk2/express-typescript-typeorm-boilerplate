@@ -1,6 +1,7 @@
 import express from 'express'
 import passport from 'passport'
 import bodyParser from 'body-parser'
+
 import userController from './controller/user'
 import passportConfig from './passport/passport'
 

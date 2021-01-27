@@ -16,7 +16,7 @@ const LocalStrategyOption = {
 
 const jwtStrategyOption = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'asdadsadasdasdsasd',
+    secretOrKey: process.env.JWT_SECRET,
 }
 
 export default () => {
@@ -24,11 +24,10 @@ export default () => {
         async (accountname, password, done) => {
             let userData;
             try {
-                userData = await user.findOne({ accountName : accountname, passWord : password })
+                userData = await user.findOne({ accountName : accountname })
                 if (!userData) return done(null, false)
-                //const isSamePassword = await bcrypt.compare(password, userData.passWord)
-                //if (!isSamePassword) return done(null, false)
-                if (password != userData.passWord) return done(null, false)
+                const isSamePassword = await bcrypt.compare(password, userData.passWord)
+                if (!isSamePassword) return done(null, false)
             } catch (e) {
                 done(e)
             }
