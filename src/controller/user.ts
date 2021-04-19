@@ -8,8 +8,11 @@ import { SignInReq, SignInRes } from "./models"
 let router = express.Router()
 
 router.get('/GetAllUsers', async function (req, res, next) {
-    let users = await User.find()
-    res.send(users)
+    passport.authenticate("jwt", { session: false }, async (err, user, info) => {
+        if (err || !user) return res.status(400).end();
+        let users = await User.find()
+        res.send(users)
+    })(req, res);
 });
 
 router.post('/SignIn', (req, res, next) => {
@@ -31,15 +34,17 @@ router.post('/SignIn', (req, res, next) => {
 
 router.post('/SignUp', async (req, res, next) => {
     const reqData = req.body as SignInReq
-    const user = await User.findOne({accountName : reqData.accountName})
-    if( user == undefined ){
+    if(reqData.accountName == undefined || reqData.passWord == undefined)
+        return res.json(new SignInRes("Invalid Argument"))
+    const user = await User.findOne({ accountName: reqData.accountName })
+    if (user == undefined) {
         const hashed = await bcrypt.hash(reqData.passWord, 1)
         const newUser = new User()
         newUser.accountName = reqData.accountName
         newUser.passWord = hashed
         await newUser.save()
         return res.json(new SignInRes("OK"))
-    }else{
+    } else {
         return res.json(new SignInRes("Already Exist UserName"))
     }
 })

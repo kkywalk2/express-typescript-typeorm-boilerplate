@@ -10,8 +10,8 @@ const jwtStrategy = passportJwt.Strategy
 const { ExtractJwt } = passportJwt
 
 const LocalStrategyOption = {
-    usernameField: "accountname",
-    passwordField: "password",
+    usernameField: "accountName",
+    passwordField: "passWord",
 }
 
 const jwtStrategyOption = {
@@ -31,7 +31,7 @@ export default () => {
             } catch (e) {
                 done(e)
             }
-            return done(null, user)
+            return done(null, userData)
         }))
 
     passport.use(new jwtStrategy(jwtStrategyOption,
@@ -43,6 +43,6 @@ export default () => {
             } catch (e) {
                 return done(e);
             }
-            return done(null, user);
+            return done(null, userData);
         }))
 }
