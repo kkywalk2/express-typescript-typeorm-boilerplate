@@ -1,13 +1,13 @@
 import express from 'express'
 import passport from 'passport'
-import bodyParser from 'body-parser'
 
-import userController from './controller/user'
-import passportConfig from './passport/passport'
+import AccountController from './controller/Account'
+import PassportConfig from './passport/Passport'
+import {ExceptionMiddleware} from './exception/ExceptionHandler'
 
 // Create express server
 const app = express();
-app.use(bodyParser.json())
+app.use(express.json())
 
 app.get('/', (req, res) => {
     res.send('Hello Express!')
@@ -18,9 +18,10 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use("/User", userController)
+app.use("/Accounts", AccountController);
 
 app.use(passport.initialize());
-passportConfig()
+app.use(ExceptionMiddleware);
+PassportConfig()
 
 export default app;
